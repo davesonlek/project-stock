@@ -1,0 +1,5 @@
+{
+    "AuthenticationAudit": true,
+    "MasterData": true,
+    "InventoryTransaction": true
+}

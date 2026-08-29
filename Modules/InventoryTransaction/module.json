@@ -1,0 +1,11 @@
+{
+    "name": "InventoryTransaction",
+    "alias": "inventorytransaction",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\InventoryTransaction\\Providers\\InventoryTransactionServiceProvider"
+    ],
+    "files": []
+}

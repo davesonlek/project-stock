@@ -1,0 +1,11 @@
+{
+    "name": "AuthenticationAudit",
+    "alias": "authenticationaudit",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AuthenticationAudit\\Providers\\AuthenticationAuditServiceProvider"
+    ],
+    "files": []
+}

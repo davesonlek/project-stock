@@ -1,0 +1,401 @@
+{
+  "info": {
+    "name": "Stock Management Prototype API",
+    "description": "Comprehensive API collection for Laravel 12 Stock Management Prototype with Multi-Tenant Isolation, RBAC, Stock Posting, Idempotency, and Reversals.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Authentication",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.access_token) {",
+                  "    pm.environment.set('jwt_token', jsonData.data.access_token);",
+                  "    if (jsonData.data.organizations && jsonData.data.organizations.length > 0) {",
+                  "        pm.environment.set('organization_id', jsonData.data.organizations[0].id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Organizations",
+      "item": [
+        {
+          "name": "List User Organizations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organizations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "organizations"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Master Data",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "products"]
+            }
+          }
+        },
+        {
+          "name": "List Goods (SKUs)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/goods",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "goods"]
+            }
+          }
+        },
+        {
+          "name": "List Warehouses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/warehouses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "warehouses"]
+            }
+          }
+        },
+        {
+          "name": "List Locations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/warehouse-locations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "warehouse-locations"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Stock Documents",
+      "item": [
+        {
+          "name": "List Stock Documents",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock/documents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stock", "documents"]
+            }
+          }
+        },
+        {
+          "name": "Create Document Header",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.id) {",
+                  "    pm.environment.set('document_id', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"document_type\": \"RECEIVE\",\n  \"destination_warehouse_id\": {{warehouse_id}},\n  \"destination_location_id\": {{location_id}},\n  \"remarks\": \"Demo Receive Shipment\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock/documents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stock", "documents"]
+            }
+          }
+        },
+        {
+          "name": "Add Document Line",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"goods_id\": {{goods_id}},\n  \"quantity\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock/documents/{{document_id}}/lines",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stock", "documents", "{{document_id}}", "lines"]
+            }
+          }
+        },
+        {
+          "name": "Submit Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock/documents/{{document_id}}/submit",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stock", "documents", "{{document_id}}", "submit"]
+            }
+          }
+        },
+        {
+          "name": "Approve Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock/documents/{{document_id}}/approve",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stock", "documents", "{{document_id}}", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Post Stock Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Idempotency-Key", "value": "idem-{{$guid}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock/documents/{{document_id}}/post",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stock", "documents", "{{document_id}}", "post"]
+            }
+          }
+        },
+        {
+          "name": "Reverse Stock Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Idempotency-Key", "value": "rev-{{$guid}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Goods damaged during offloading\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/stock/documents/{{document_id}}/reverse",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "stock", "documents", "{{document_id}}", "reverse"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Inventory Queries",
+      "item": [
+        {
+          "name": "Get Stock Balances",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/inventory/stock",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inventory", "stock"]
+            }
+          }
+        },
+        {
+          "name": "Get Stock Lots",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/inventory/lots",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inventory", "lots"]
+            }
+          }
+        },
+        {
+          "name": "Get Serial Numbers",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/inventory/serials",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inventory", "serials"]
+            }
+          }
+        },
+        {
+          "name": "Get Stock Movements (Ledger)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "X-Organization-Id", "value": "{{organization_id}}" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/inventory/movements",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inventory", "movements"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
