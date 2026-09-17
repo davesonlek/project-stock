@@ -57,6 +57,13 @@
                     </a>
                 </li>
 
+                <li class="sidebar-heading">Reports</li>
+                <li>
+                    <a href="{{ route('reports.inventory-daily-summary.index') }}" class="nav-link {{ request()->routeIs('reports.inventory-daily-summary.*') ? 'active' : '' }}">
+                        <i class="bi bi-calendar3"></i>Inventory Daily Summary
+                    </a>
+                </li>
+
                 <li class="sidebar-heading">Transactions</li>
                 <li>
                     <a href="{{ route('stock.documents.index') }}" class="nav-link {{ request()->routeIs('stock.documents.*') ? 'active' : '' }}">
