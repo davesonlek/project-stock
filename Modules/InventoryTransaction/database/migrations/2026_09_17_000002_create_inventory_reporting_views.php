@@ -125,10 +125,10 @@ return new class extends Migration
                     ELSE 'MISMATCH'
                 END AS reconciliation_status
             FROM reconciled r
-            INNER JOIN goods g ON g.id = r.goods_id
-            INNER JOIN products p ON p.id = g.product_id
-            INNER JOIN warehouses w ON w.id = r.warehouse_id
-            INNER JOIN warehouse_locations wl ON wl.id = r.location_id;
+            LEFT JOIN goods g ON g.id = r.goods_id
+            LEFT JOIN products p ON p.id = g.product_id
+            LEFT JOIN warehouses w ON w.id = r.warehouse_id
+            LEFT JOIN warehouse_locations wl ON wl.id = r.location_id;
         ");
 
         DB::unprepared("
