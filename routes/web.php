@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\AuthenticationAudit\Http\Controllers\WebAuditLogController;
 use Modules\AuthenticationAudit\Http\Controllers\WebAuthController;
 use Modules\AuthenticationAudit\Http\Middleware\WebOrganizationContextMiddleware;
+use Modules\InventoryTransaction\Http\Controllers\InventoryDailySummaryController;
 use Modules\InventoryTransaction\Http\Controllers\WebDashboardController;
 use Modules\InventoryTransaction\Http\Controllers\WebReservationController;
 use Modules\InventoryTransaction\Http\Controllers\WebSerialNumberController;
@@ -42,6 +43,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', WebOrganizationContextMiddleware::class])->group(function () {
     // Dashboard
     Route::get('/dashboard', [WebDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/inventory-summary/refresh', [InventoryDailySummaryController::class, 'refreshToday'])
+        ->name('dashboard.inventory-summary.refresh');
+
+    // Reports
+    Route::get('/reports/inventory-daily-summary', [InventoryDailySummaryController::class, 'index'])
+        ->name('reports.inventory-daily-summary.index');
+    Route::post('/reports/inventory-daily-summary/refresh', [InventoryDailySummaryController::class, 'refreshRange'])
+        ->name('reports.inventory-daily-summary.refresh');
 
     // Master Data Routes
     Route::prefix('categories')->name('categories.')->group(function () {
